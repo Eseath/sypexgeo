@@ -26,5 +26,15 @@
         "psr-4": {
             "Eseath\\SxGeo\\": "src"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Eseath\\SxGeo\\SxGeoServiceProvider"
+            ],
+            "aliases": {
+                "SxGeo": "Eseath\\SxGeo\\Facades\\SxGeo"
+            }
+        }
     }
 }
