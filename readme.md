@@ -5,15 +5,42 @@
 
 A PHP package for working with the [SypexGeo](https://sypexgeo.net) database file.
 
-Supports Laravel 5.* ([see wiki](https://github.com/Eseath/sypexgeo/wiki))
+The current version supports Laravel 5.5 and later. If you need support Laravel 5.4 or older, see version 1.*.
 
-## Installation
+## Installation for Laravel >=5.5
 
 1\. Add the package through composer:
 
-    composer require eseath/sypexgeo
+```
+composer require eseath/sypexgeo
+```
 
-2\. Download the database file of [countries](https://sypexgeo.net/files/SxGeoCountry.zip) or [cities](https://sypexgeo.net/files/SxGeoCity_utf8.zip).
+2\. Publish config `sxgeo.php` (optionally):
+
+```
+php artisan vendor:publish --provider="Eseath\SxGeo\SxGeoServiceProvider"
+```
+
+By default in config specified URL to the database of cities. If you want the database of countries, change url:
+
+```
+...
+    'dbFileURL' => 'https://sypexgeo.net/files/SxGeoCountry.zip',
+...
+```
+
+3\. Download the database file:
+
+```
+php artisan sxgeo:update
+```
+
+You can use this command to upgrade database to the current version via CRON.
+
+Also you can download the database manually:
+
+* [Сountries](https://sypexgeo.net/files/SxGeoCountry.zip)
+* [Сities](https://sypexgeo.net/files/SxGeoCity_utf8.zip)
 
 ## Usage
 
@@ -23,6 +50,14 @@ use Eseath\SxGeo\SxGeo;
 $sxGeo = new SxGeo('/path/to/database/file.dat');
 $fullInfo  = $sxGeo->getCityFull($ip)
 $briefInfo = $sxGeo->get($ip);
+```
+
+### With Laravel
+
+```php
+use SxGeo;
+
+$data = SxGeo::getCityFull($ip);
 ```
 
 ## Example Data
