@@ -144,8 +144,8 @@ class SxGeoUpdate extends Command
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_AUTOREFERER, true);
         curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_NOPROGRESS, 0);
         curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, function ($resource, $totalBytes, $downloadedBytes) use ($progressBar, &$last) {
             if ($totalBytes !== 0) {
