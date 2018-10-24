@@ -23,8 +23,6 @@ class CityTest extends TestCase
     {
         parent::setUp();
 
-        \Artisan::call('sxgeo:update');
-
         $this->base = $this->app->make(SxGeo::class);
         $this->data = $this->base->getCityFull('5.255.255.5');
     }
