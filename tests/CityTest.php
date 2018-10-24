@@ -23,7 +23,7 @@ class CityTest extends TestCase
         parent::setUp();
 
         $this->base = $this->app->make(SxGeo::class);
-        $this->data = $this->base->getCityFull('5.255.255.5');
+        $this->data = $this->base->getCityFull('109.72.73.9');
     }
 
     public function testCountry()
