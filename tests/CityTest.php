@@ -2,7 +2,6 @@
 
 namespace Eseath\SxGeo\Tests;
 
-use PHPUnit\Framework\Constraint\IsType;
 use Eseath\SxGeo\SxGeo;
 
 class CityTest extends TestCase
