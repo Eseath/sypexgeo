@@ -77,7 +77,7 @@ class SxGeoUpdate extends Command
      *
      * @return bool
      */
-    private function checkForUpdates()
+    private function checkForUpdates() : bool
     {
         $this->info('Checking for updates...');
 
