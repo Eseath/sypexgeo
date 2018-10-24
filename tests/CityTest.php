@@ -18,9 +18,20 @@ class CityTest extends TestCase
      */
     protected $data;
 
+    /**
+     * @var bool
+     */
+    protected $db_updated = false;
+
     public function setUp()
     {
         parent::setUp();
+
+        if (!$this->db_updated) {
+            \Artisan::call('sxgeo:update');
+
+            $this->db_updated = true;
+        }
 
         $this->base = $this->app->make(SxGeo::class);
         $this->data = $this->base->getCityFull('109.72.73.9');

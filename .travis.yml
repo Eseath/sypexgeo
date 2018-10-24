@@ -29,7 +29,6 @@ before_install:
 
 install:
   - travis_retry composer install --no-suggest --no-interaction
-  - travis_retry php artisan sxgeo:update
 
 script:
   - vendor/bin/phpunit --verbose --configuration phpunit.xml.dist
