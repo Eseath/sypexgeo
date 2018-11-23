@@ -12,6 +12,6 @@ class SxGeo extends Facade
      */
     protected static function getFacadeAccessor() : string
     {
-        return Eseath\SxGeo\SxGeo::class;
+        return \Eseath\SxGeo\SxGeo::class;
     }
 }
