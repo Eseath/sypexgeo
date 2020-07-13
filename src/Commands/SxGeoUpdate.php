@@ -137,6 +137,23 @@ class SxGeoUpdate extends Command
         $progressBar->setFormat('custom');
         $progressBar->start();
 
+        $calculateProgress = function ($resource, $totalBytes, $downloadedBytes) use ($progressBar, &$last) {
+            if ($totalBytes !== 0) {
+                $totalMb = number_format($totalBytes / (1024 * 1024), 2);
+                $downloadedMb = number_format($downloadedBytes / (1024 * 1024), 2);
+
+                if ($last !== $downloadedMb) {
+                    $progressBar->setMessage($totalMb, 'total');
+                    $progressBar->setMessage($downloadedMb, 'now');
+                    $progressBar->setMessage((int) ($downloadedMb / ($totalMb / 100)), 'dlPercent');
+                    $progressBar->advance();
+                    $last = $downloadedMb;
+                } else {
+                    $progressBar->finish();
+                }
+            }
+        };
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->dbFileURL);
         curl_setopt($ch, CURLOPT_FAILONERROR, true);
@@ -147,34 +164,22 @@ class SxGeoUpdate extends Command
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_NOPROGRESS, 0);
-        curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, function ($resource, $totalBytes, $downloadedBytes) use ($progressBar, &$last) {
-            if ($totalBytes !== 0) {
-                $totalMb = number_format($totalBytes / (1024 * 1024), 2);
-                $downloadedMb = number_format($downloadedBytes / (1024 * 1024), 2);
-
-                if ($last !== $downloadedMb) {
-                    $progressBar->setMessage($totalMb, 'total');
-                    $progressBar->setMessage($downloadedMb, 'now');
-                    $progressBar->setMessage(intval($downloadedMb / ($totalMb / 100)), 'dlPercent');
-                    $progressBar->advance();
-                    $last = $downloadedMb;
-                } else {
-                    $progressBar->finish();
-                }
-            }
-        });
+        curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, $calculateProgress);
         curl_setopt($ch, CURLOPT_FILE, $zipResource);
-        $result = curl_exec($ch);
+
+        if (curl_exec($ch) === false) {
+            $error = curl_error($ch);
+        }
+
         curl_close($ch);
 
         $this->output->newLine();
 
-        if (!$result) {
-            $this->error('Download failed: ' . curl_error($ch));
-            return;
+        if (isset($error)) {
+            $this->error('Download failed: ' . $error);
+        } else {
+            $this->extract($zipFile);
         }
-
-        $this->extract($zipFile);
     }
 
     /**

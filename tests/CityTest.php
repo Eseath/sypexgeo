@@ -3,6 +3,7 @@
 namespace Eseath\SxGeo\Tests;
 
 use Eseath\SxGeo\SxGeo;
+use Illuminate\Support\Facades\Artisan;
 
 class CityTest extends TestCase
 {
@@ -13,7 +14,7 @@ class CityTest extends TestCase
 
     /**
      * IP-address info.
-     * 
+     *
      * @var array
      */
     protected $data;
@@ -28,7 +29,7 @@ class CityTest extends TestCase
         parent::setUp();
 
         if (!$this->db_updated) {
-            \Artisan::call('sxgeo:update');
+            Artisan::call('sxgeo:update');
 
             $this->db_updated = true;
         }
