@@ -61,7 +61,7 @@ class SxGeo
         $this->fh = fopen($db_file, 'rb');
         // Сначала убеждаемся, что есть файл базы данных
         $header = fread($this->fh, 40); // В версии 2.2 заголовок увеличился на 8 байт
-        if(substr($header, 0, 3) != 'SxG') die("Can't open {$db_file}\n");
+        if(strpos($header, 'SxG') !== 0) die("Can't open {$db_file}\n");
         $info = unpack('Cver/Ntime/Ctype/Ccharset/Cb_idx_len/nm_idx_len/nrange/Ndb_items/Cid_len/nmax_region/nmax_city/Nregion_size/Ncity_size/nmax_country/Ncountry_size/npack_size', substr($header, 3));
         if($info['b_idx_len'] * $info['m_idx_len'] * $info['range'] * $info['db_items'] * $info['time'] * $info['id_len'] == 0) die("Wrong file format {$db_file}\n");
         $this->range       = $info['range'];
@@ -164,10 +164,9 @@ class SxGeo
         if ($this->memory_mode) {
             return $this->search_db($this->db, $ipn, $min, $max);
         }
-        else {
-            fseek($this->fh, $this->db_begin + $min * $this->block_len);
-            return $this->search_db(fread($this->fh, $len * $this->block_len), $ipn, 0, $len);
-        }
+
+        fseek($this->fh, $this->db_begin + $min * $this->block_len);
+        return $this->search_db(fread($this->fh, $len * $this->block_len), $ipn, 0, $len);
     }
 
     protected function readData($seek, $max, $type){
@@ -205,10 +204,9 @@ class SxGeo
             unset($region['country_seek']);
             return array('city' => $city, 'region' => $region, 'country' => $country);
         }
-        else {
-            unset($city['region_seek']);
-            return array('city' => $city, 'country' => array('id' => $country['id'], 'iso' => $country['iso']));
-        }
+
+        unset($city['region_seek']);
+        return array('city' => $city, 'country' => array('id' => $country['id'], 'iso' => $country['iso']));
     }
 
     protected function unpack($pack, $item = ''){
@@ -218,7 +216,7 @@ class SxGeo
         $pos = 0;
         foreach($pack AS $p){
             list($type, $name) = explode(':', $p);
-            $type0 = $type{0};
+            $type0 = $type[0];
             if($empty) {
                 $unpacked[$name] = $type0 == 'b' || $type0 == 'c' ? '' : 0;
                 continue;
@@ -242,15 +240,15 @@ class SxGeo
                 case 'T': $v = unpack('C', $val); break;
                 case 's': $v = unpack('s', $val); break;
                 case 'S': $v = unpack('S', $val); break;
-                case 'm': $v = unpack('l', $val . (ord($val{2}) >> 7 ? "\xff" : "\0")); break;
+                case 'm': $v = unpack('l', $val . ((ord($val[2]) >> 7) ? "\xff" : "\0")); break;
                 case 'M': $v = unpack('L', $val . "\0"); break;
                 case 'i': $v = unpack('l', $val); break;
                 case 'I': $v = unpack('L', $val); break;
                 case 'f': $v = unpack('f', $val); break;
                 case 'd': $v = unpack('d', $val); break;
 
-                case 'n': $v = current(unpack('s', $val)) / pow(10, $type{1}); break;
-                case 'N': $v = current(unpack('l', $val)) / pow(10, $type{1}); break;
+                case 'n': $v = current(unpack('s', $val)) / (10 ** $type[1]); break;
+                case 'N': $v = current(unpack('l', $val)) / (10 ** $type[1]); break;
 
                 case 'c': $v = rtrim($val, ' '); break;
                 case 'b': $v = $val; $l++; break;
