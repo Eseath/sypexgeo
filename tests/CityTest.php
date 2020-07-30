@@ -24,7 +24,7 @@ class CityTest extends TestCase
      */
     protected $db_updated = false;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -38,21 +38,21 @@ class CityTest extends TestCase
         $this->data = $this->base->getCityFull('109.72.73.9');
     }
 
-    public function testCountry()
+    public function testCountry() : void
     {
         $this->assertEquals('RU', $this->data['country']['iso']);
         $this->assertEquals('Russia', $this->data['country']['name_en']);
         $this->assertEquals('Россия', $this->data['country']['name_ru']);
     }
 
-    public function testRegion()
+    public function testRegion() : void
     {
         $this->assertEquals('RU-MOW', $this->data['region']['iso']);
         $this->assertEquals('Moskva', $this->data['region']['name_en']);
         $this->assertEquals('Москва', $this->data['region']['name_ru']);
     }
 
-    public function testCity()
+    public function testCity() : void
     {
         $this->assertEquals('Moscow', $this->data['city']['name_en']);
         $this->assertEquals('Москва', $this->data['city']['name_ru']);
