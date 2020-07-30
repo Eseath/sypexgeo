@@ -25,19 +25,19 @@ matrix:
 
     # Laravel 6
   - php: 7.2
-    env: LARAVEL=6.* TESTBENCH=3.6.* PHPUNIT=~8.0
+    env: LARAVEL=6.* TESTBENCH=4.* PHPUNIT=~8.0
   - php: 7.3
-    env: LARAVEL=6.* TESTBENCH=3.6.* PHPUNIT=~8.0
+    env: LARAVEL=6.* TESTBENCH=4.* PHPUNIT=~8.0
   - php: 7.4
-    env: LARAVEL=6.* TESTBENCH=3.6.* PHPUNIT=~8.0
+    env: LARAVEL=6.* TESTBENCH=4.* PHPUNIT=~8.0
 
     # Laravel 7
   - php: 7.2
-    env: LARAVEL=7.* TESTBENCH=5.0.* PHPUNIT=~8.5
+    env: LARAVEL=7.* TESTBENCH=5.* PHPUNIT=~8.5
   - php: 7.3
-    env: LARAVEL=7.* TESTBENCH=5.0.* PHPUNIT=~8.5
+    env: LARAVEL=7.* TESTBENCH=5.* PHPUNIT=~8.5
   - php: 7.4
-    env: LARAVEL=7.* TESTBENCH=5.0.* PHPUNIT=~8.5
+    env: LARAVEL=7.* TESTBENCH=5.* PHPUNIT=~8.5
 
 before_install:
   - composer self-update --stable --no-interaction
