@@ -10,8 +10,8 @@ matrix:
   fast_finish: true
   include:
   # Laravel 5.5
-  - php: 7.0
-    env: LARAVEL=5.5.* TESTBENCH=3.5.* PHPUNIT=~6.0
+#  - php: 7.0
+#    env: LARAVEL=5.5.* TESTBENCH=3.5.* PHPUNIT=~6.0
   - php: 7.1
     env: LARAVEL=5.5.* TESTBENCH=3.5.* PHPUNIT=~6.0
   - php: 7.2
