@@ -1,7 +1,8 @@
 # SypexGeo PHP API
 
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.0-8892BF.svg?style=flat)](https://php.net/)
 [![Latest stable version](https://poser.pugx.org/eseath/sypexgeo/v/stable)](https://packagist.org/packages/eseath/sypexgeo)
-[![Build Status](https://travis-ci.org/Eseath/sypexgeo.svg?branch=master)](https://travis-ci.org/Eseath/sypexgeo)
+[![Build Status](https://travis-ci.com/Eseath/sypexgeo.svg?branch=master)](https://travis-ci.com/Eseath/sypexgeo)
 
 A PHP package for working with the [SypexGeo](https://sypexgeo.net) database file.
 
@@ -21,7 +22,7 @@ composer require eseath/sypexgeo
 php artisan vendor:publish --provider="Eseath\SxGeo\SxGeoServiceProvider"
 ```
 
-By default in config specified URL to the database of cities. If you want the database of countries, change url:
+By default, in config specified URL to the database of cities. If you want the database of countries, change url:
 
 ```
 ...
@@ -37,10 +38,10 @@ php artisan sxgeo:update
 
 You can use this command to upgrade database to the current version via CRON.
 
-Also you can download the database manually:
+Also, you can download the database manually:
 
-* [Сountries](https://sypexgeo.net/files/SxGeoCountry.zip)
-* [Сities](https://sypexgeo.net/files/SxGeoCity_utf8.zip)
+* [Countries](https://sypexgeo.net/files/SxGeoCountry.zip)
+* [Cities](https://sypexgeo.net/files/SxGeoCity_utf8.zip)
 
 ## Usage
 
@@ -48,7 +49,7 @@ Also you can download the database manually:
 use Eseath\SxGeo\SxGeo;
 
 $sxGeo = new SxGeo('/path/to/database/file.dat');
-$fullInfo  = $sxGeo->getCityFull($ip)
+$fullInfo  = $sxGeo->getCityFull($ip);
 $briefInfo = $sxGeo->get($ip);
 ```
 
