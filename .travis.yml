@@ -37,6 +37,12 @@ matrix:
     - php: 7.4
       env: LARAVEL=7.* TESTBENCH=5.*
 
+    # Laravel 8
+    - php: 8.0
+      env: LARAVEL=8.* TESTBENCH=6.*
+    - php: 8.1
+      env: LARAVEL=8.* TESTBENCH=6.*
+
 before_install:
   - composer self-update --stable --no-interaction
   - composer require orchestra/testbench:$TESTBENCH --no-update --no-interaction --dev
