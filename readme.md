@@ -11,7 +11,7 @@ Supports Laravel 5.* ([see wiki](https://github.com/Eseath/sypexgeo/wiki))
 
 1\. Add the package through composer:
 
-    composer require eseath/sypexgeo
+    composer require eseath/sypexgeo:^1.1
 
 2\. Download the database file of [countries](https://sypexgeo.net/files/SxGeoCountry.zip) or [cities](https://sypexgeo.net/files/SxGeoCity_utf8.zip).
 
