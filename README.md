@@ -104,3 +104,21 @@ array:2 [▼
     ]
 ]
 ```
+
+## Running Tests
+
+The tests are run automatically by Travis CI on multiple PHP and Laravel versions.
+
+If you want to run tests locally, use the following command:
+
+```shell
+docker-compose run php-8.1-laravel-7
+```
+
+Check the `docker-compose.yml` file for the versions available for testing.
+
+## Development
+
+```shell
+docker-compose run php-7.1 composer install
+```
