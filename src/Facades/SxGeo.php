@@ -1,4 +1,5 @@
 <?php
+
 namespace Eseath\SxGeo\Facades;
 
 use Illuminate\Support\Facades\Facade;

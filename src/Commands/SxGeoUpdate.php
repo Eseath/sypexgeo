@@ -1,4 +1,5 @@
 <?php
+
 namespace Eseath\SxGeo\Commands;
 
 use ZipArchive;
