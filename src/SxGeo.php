@@ -48,6 +48,12 @@ class SxGeo
     protected $regions_db;
     protected $cities_db;
 
+    /**
+     * SypexGeo database version.
+     * @var string
+     */
+    protected $version;
+
     public $id2iso = [
         '', 'AP', 'EU', 'AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'CW', 'AO', 'AQ', 'AR', 'AS', 'AT', 'AU',
         'AW', 'AZ', 'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BM', 'BN', 'BO', 'BR', 'BS',
@@ -87,6 +93,7 @@ class SxGeo
             die("Wrong file format {$db_file}\n");
         }
 
+        $this->version     = (string) ($info['ver'] / 10);
         $this->range       = $info['range'];
         $this->b_idx_len   = $info['b_idx_len'];
         $this->m_idx_len   = $info['m_idx_len'];
@@ -375,6 +382,7 @@ class SxGeo
     public function about() : array
     {
         return [
+            'Version' => $this->version,
             'Created' => date('Y.m.d', $this->info['time']),
             'Timestamp' => $this->info['time'],
             'Charset' => self::CHARSETS[$this->info['charset']],
