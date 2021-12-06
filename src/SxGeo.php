@@ -22,14 +22,14 @@ class SxGeo
     const CHARSETS = ['utf-8', 'latin1', 'cp1251'];
 
     const TYPES = [
-        'n/a',
-        'SxGeo Country',
-        'SxGeo City RU',
-        'SxGeo City EN',
-        'SxGeo City',
-        'SxGeo City Max RU',
-        'SxGeo City Max EN',
-        'SxGeo City Max',
+        DatabaseType::NA,
+        DatabaseType::COUNTRY,
+        DatabaseType::CITY_RU,
+        DatabaseType::CITY_EN,
+        DatabaseType::CITY,
+        DatabaseType::CITY_MAX_RU,
+        DatabaseType::CITY_MAX_EN,
+        DatabaseType::CITY_MAX,
     ];
 
     protected $fh;
