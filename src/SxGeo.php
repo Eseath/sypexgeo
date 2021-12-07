@@ -379,7 +379,13 @@ class SxGeo
         return $seek ? $this->parseCity($seek, 1) : false;
     }
 
+    /** @deprecated Will be deleted in next major release. Use getMetadata() instead. */
     public function about() : array
+    {
+        return $this->getMetadata();
+    }
+
+    public function getMetadata() : array
     {
         return [
             'Version' => $this->version,

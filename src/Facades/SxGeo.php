@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array|false getCity(string $ip)
  * @method static array|false getCityFull(string $ip)
  * @method static array about()
+ * @method static array getMetadata()
  */
 class SxGeo extends Facade
 {
