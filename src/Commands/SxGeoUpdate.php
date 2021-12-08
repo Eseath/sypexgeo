@@ -67,7 +67,17 @@ class SxGeoUpdate extends Command
         $progressBar->setFormat('custom');
         $progressBar->start();
 
-        $this->updater->download(function (int $totalBytes, int $downloadedBytes) use ($progressBar) {
+        $this->updater->download(function () use ($progressBar) {
+            $args = func_get_args();
+
+            // See https://php.watch/versions/8.0/resource-CurlHandle
+            // See https://github.com/guzzle/guzzle/blob/6.5.5/src/Handler/CurlFactory.php#L485
+            if (PHP_MAJOR_VERSION === 8 && is_object($args[0])) {
+                array_shift($args);
+            }
+
+            list($totalBytes, $downloadedBytes) = $args;
+
             if ($totalBytes !== 0) {
                 $totalMb = number_format($totalBytes / (1024 * 1024), 2);
                 $downloadedMb = number_format($downloadedBytes / (1024 * 1024), 2);
