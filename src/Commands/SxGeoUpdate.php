@@ -1,219 +1,105 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Eseath\SxGeo\Commands;
 
-use ZipArchive;
+use Eseath\SxGeo\Updater;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 
 class SxGeoUpdate extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'sxgeo:update';
+    protected $signature = 'sxgeo:update
+                                {--force : Do not check SypexGeo database timestamp}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Updating geodatabase';
+    protected $description = 'Updates the SypexGeo database or installs it if it does not exist.';
 
-    /**
-     * The URL of the database file.
-     *
-     * @var string
-     */
-    private $dbFileURL;
+    protected $updater;
 
-    /**
-     * The local path to the database file.
-     *
-     * @var string
-     */
-    private $localPath;
-
-    /**
-     * The temporary directory.
-     *
-     * @var string
-     */
-    private $tmpDir;
-
-    /**
-     * @var string
-     */
-    private $userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36';
-
-    /**
-     * SxGeoUpdate constructor.
-     */
     public function __construct()
     {
         parent::__construct();
 
-        $this->dbFileURL = config('sxgeo.dbFileURL');
-        $this->localPath = config('sxgeo.localPath');
-        $this->tmpDir    = sys_get_temp_dir();
+        $this->updater = new Updater(config('sxgeo.dbFileURL'), config('sxgeo.localPath'));
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return void
-     */
     public function handle()
     {
-        if ($this->checkForUpdates()) {
-            $this->download();
-        } else {
-            $this->info('No updates available.');
+        $this->output->getFormatter()->setStyle('title', new OutputFormatterStyle('blue', null, ['bold']));
+        $this->output->newLine();
+
+        if (! $this->option('force') && ! $this->checkForUpdates()) {
+            return;
         }
+
+        $this->download();
+
+        if (! $this->extract()) {
+            return;
+        }
+
+        $this->info(PHP_EOL . 'The SypexGeo database successfully updated.');
+        $this->output->newLine();
     }
 
-    /**
-     * Checks for updates.
-     *
-     * @return bool
-     */
-    private function checkForUpdates() : bool
+    protected function checkForUpdates()
     {
-        $this->info('Checking for updates...');
+        $this->output->writeln('<title>• Checking for updates...</title>');
 
-        if (!file_exists($this->localPath)) {
-            return true;
+        if (! $this->updater->checkForUpdates()) {
+            $this->info('  No updates available.');
+            $this->output->newLine();
+            return false;
         }
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_URL, $this->dbFileURL);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
-        curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_NOBODY, true);
+        $this->info('  Updates available!');
 
-        $content = curl_exec($ch);
-        $headers = explode("\r\n", trim($content));
-        $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        curl_close($ch);
-        array_shift($headers);
-
-        $response = [
-            'status'  => $http_status,
-            'headers' => []
-        ];
-
-        foreach ($headers as $header) {
-            list($x, $y) = explode(': ', $header);
-            $response['headers'][$x] = $y;
-        }
-
-        $lastModified = new \DateTime($response['headers']['Last-Modified']);
-        $fileModifiedTime = (new \DateTime())->setTimestamp(filemtime($this->localPath));
-
-        return $lastModified > $fileModifiedTime;
+        return true;
     }
 
-    /**
-     * Retrieves the SxGeo database file.
-     *
-     * @return void
-     */
-    private function download()
+    protected function download()
     {
-        $this->info('Downloading database file...');
-
-        $zipFile = implode(DIRECTORY_SEPARATOR, [
-            $this->tmpDir,
-            'sypexgeo-' . md5(microtime()) . '.zip',
-        ]);
-
-        $zipResource = fopen($zipFile, "w");
+        $this->output->writeln('<title>• Downloading database file...</title>');
 
         $progressBar = $this->output->createProgressBar();
-        $progressBar->setFormatDefinition('custom', 'Downloaded %now%Mb/%total%Mb (%dlPercent%%)');
+        $progressBar->setFormatDefinition('custom', '  <fg=green>Downloaded %now%Mb/%total%Mb (%dlPercent%%)</>');
         $progressBar->setFormat('custom');
         $progressBar->start();
 
-        $calculateProgress = function ($resource, $totalBytes, $downloadedBytes) use ($progressBar, &$last) {
+        $this->updater->download(function (int $totalBytes, int $downloadedBytes) use ($progressBar) {
             if ($totalBytes !== 0) {
                 $totalMb = number_format($totalBytes / (1024 * 1024), 2);
                 $downloadedMb = number_format($downloadedBytes / (1024 * 1024), 2);
 
-                if ($last !== $downloadedMb) {
+                if ($downloadedBytes < $totalBytes) {
                     $progressBar->setMessage($totalMb, 'total');
                     $progressBar->setMessage($downloadedMb, 'now');
-                    $progressBar->setMessage((int) ($downloadedMb / ($totalMb / 100)), 'dlPercent');
+                    $progressBar->setMessage((string) (int) ($downloadedMb / ($totalMb / 100)), 'dlPercent');
                     $progressBar->advance();
-                    $last = $downloadedMb;
                 } else {
                     $progressBar->finish();
                 }
             }
-        };
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->dbFileURL);
-        curl_setopt($ch, CURLOPT_FAILONERROR, true);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_AUTOREFERER, true);
-        curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($ch, CURLOPT_NOPROGRESS, 0);
-        curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, $calculateProgress);
-        curl_setopt($ch, CURLOPT_FILE, $zipResource);
-
-        if (curl_exec($ch) === false) {
-            $error = curl_error($ch);
-        }
-
-        curl_close($ch);
+        });
 
         $this->output->newLine();
-
-        if (isset($error)) {
-            $this->error('Download failed: ' . $error);
-        } else {
-            $this->extract($zipFile);
-        }
     }
 
-    /**
-     * @param  string  $archivePath
-     * @return void
-     */
-    private function extract($archivePath)
+    protected function extract()
     {
-        $this->info('Extracting file from archive...');
+        $this->output->writeln('<title>• Extracting file from archive...</title>');
 
-
-        $extractPath = implode(DIRECTORY_SEPARATOR, [$this->tmpDir, 'sypexgeo-' . md5(microtime())]);
-
-        $zip = new ZipArchive();
-        $res = $zip->open($archivePath);
-
-        if ($res !== true) {
-            $this->error("Extraction failed: error code {$res}");
-            return;
+        try {
+            $this->updater->extract();
+            $this->info('  File copied to ' . $this->updater->getDestinationPath());
+        } catch (\Exception $e) {
+            $this->output->writeln('  <fg=red>' . $e->getMessage() . '</>');
+            $this->output->writeln('  <fg=red>' . $e->getFile() . '#' . $e->getLine() . '</>');
+            $this->output->newLine();
+            return false;
         }
 
-        $fileName = $zip->getNameIndex(0);
-
-        $zip->extractTo($extractPath);
-        $zip->close();
-
-        $this->info("Copying file to {$this->localPath}...");
-
-        if (!copy($extractPath . DIRECTORY_SEPARATOR . $fileName, $this->localPath)) {
-            $this->error('Copy failed.');
-            return;
-        }
-
-        $this->info('Updating complete.');
+        return true;
     }
 }

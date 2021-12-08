@@ -28,7 +28,7 @@ class UpdateCommandTest extends TestCase
         Artisan::call('sxgeo:update');
 
         $db = new SxGeo(config('sxgeo.localPath'));
-        $metadata = $db->about();
+        $metadata = $db->getMetadata();
 
         $this->assertSame(DatabaseType::CITY_EN, $metadata['Type']);
         $this->assertSame('2.2', $metadata['Version']);
@@ -42,9 +42,41 @@ class UpdateCommandTest extends TestCase
         Artisan::call('sxgeo:update');
 
         $db = new SxGeo(config('sxgeo.localPath'));
-        $metadata = $db->about();
+        $metadata = $db->getMetadata();
 
         $this->assertSame(DatabaseType::COUNTRY, $metadata['Type']);
         $this->assertSame('2.2', $metadata['Version']);
+    }
+
+    public function testDbMustBeUpdatedWithForceArgument() : void
+    {
+        config()->set('sxgeo.dbFileURL', 'https://sypexgeo.net/files/SxGeoCountry.zip');
+        $path = config('sxgeo.localPath');
+
+        Artisan::call('sxgeo:update');
+        $ctime1 = filectime($path);
+
+        sleep(1);
+
+        Artisan::call('sxgeo:update --force');
+        $ctime2 = filectime($path);
+
+        $this->assertTrue($ctime2 > $ctime1);
+    }
+
+    public function testDbMustNotBeUpdatedWithoutForceArgument() : void
+    {
+        config()->set('sxgeo.dbFileURL', 'https://sypexgeo.net/files/SxGeoCountry.zip');
+        $path = config('sxgeo.localPath');
+
+        Artisan::call('sxgeo:update');
+        $ctime1 = filectime($path);
+
+        sleep(1);
+
+        Artisan::call('sxgeo:update');
+        $ctime2 = filectime($path);
+
+        $this->assertSame($ctime1, $ctime2);
     }
 }
