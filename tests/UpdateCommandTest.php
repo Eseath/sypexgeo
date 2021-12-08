@@ -58,7 +58,7 @@ class UpdateCommandTest extends TestCase
 
         sleep(1);
 
-        Artisan::call('sxgeo:update --force');
+        Artisan::call('sxgeo:update', ['--force' => true]);
         $ctime2 = filectime($path);
 
         $this->assertTrue($ctime2 > $ctime1);
