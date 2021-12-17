@@ -1,5 +1,6 @@
 language: php
 
+dist: focal
 sudo: false
 
 cache:
