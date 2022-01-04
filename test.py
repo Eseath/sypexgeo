@@ -66,7 +66,7 @@ def runTask(cmd, description):
 
 def runDockerService(serviceName):
     runTask(
-        cmd = ['docker', 'compose', 'run', serviceName],
+        cmd = ['docker', 'compose', 'run', '--rm', serviceName],
         description = f'Testing in the {bcolors.BOLD}{serviceName}{bcolors.END} container'
     )
 
