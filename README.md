@@ -114,10 +114,8 @@ The tests are run automatically by Travis CI on multiple PHP and Laravel version
 If you want to run tests locally, use the following command:
 
 ```shell
-docker-compose run php-8.1_laravel-8
+python3 ./test.py
 ```
-
-Check the `docker-compose.yml` file for the versions available for testing.
 
 ## Development
 
