@@ -16,67 +16,67 @@ services:
             args:
                 - PHP_VERSION=7.1
         environment:
-            - TESTBENCH_VERSION=3.5
+            - TESTBENCH_VERSION=3.5.*
 
     php-7.1_laravel-5.6:
         build:
             args:
                 - PHP_VERSION=7.1
         environment:
-            - TESTBENCH_VERSION=3.6
+            - TESTBENCH_VERSION=3.6.*
 
     php-7.1_laravel-5.7:
         build:
             args:
                 - PHP_VERSION=7.1
         environment:
-            - TESTBENCH_VERSION=3.7
+            - TESTBENCH_VERSION=3.7.*
 
     php-7.1_laravel-5.8:
         build:
             args:
                 - PHP_VERSION=7.1
         environment:
-            - TESTBENCH_VERSION=3.8
+            - TESTBENCH_VERSION=3.8.*
 
     php-7.2_laravel-6:
         build:
             args:
                 - PHP_VERSION=7.2
         environment:
-            - TESTBENCH_VERSION=4.0
+            - TESTBENCH_VERSION=4.0.*
 
     php-7.2_laravel-7:
         build:
             args:
                 - PHP_VERSION=7.2
         environment:
-            - TESTBENCH_VERSION=5.0
+            - TESTBENCH_VERSION=5.0.*
 
     php-7.3_laravel-7:
         build:
             args:
                 - PHP_VERSION=7.3
         environment:
-            - TESTBENCH_VERSION=5.0
+            - TESTBENCH_VERSION=5.0.*
 
     php-7.4_laravel-7:
         build:
             args:
                 - PHP_VERSION=7.4
         environment:
-            - TESTBENCH_VERSION=5.0
+            - TESTBENCH_VERSION=5.0.*
 
     php-8.0_laravel-8:
         build:
             args:
                 - PHP_VERSION=8.0
         environment:
-            - TESTBENCH_VERSION=6.0
+            - TESTBENCH_VERSION=6.0.*
 
     php-8.1_laravel-8:
         build:
             args:
                 - PHP_VERSION=8.1
         environment:
-            - TESTBENCH_VERSION=6.0
+            - TESTBENCH_VERSION=6.0.*
