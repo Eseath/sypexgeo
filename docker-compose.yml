@@ -11,6 +11,39 @@ services:
             TESTBENCH: '5.0'
         entrypoint: []
 
+    php-7.1_laravel-5.1:
+        build:
+            args:
+                - PHP_VERSION=7.1
+        environment:
+            - TESTBENCH_VERSION=3.1.*
+            - PHPUNIT_VERSION=5.7
+            - FAKER_VERSION=1.9
+
+    php-7.1_laravel-5.2:
+        build:
+            args:
+                - PHP_VERSION=7.1
+        environment:
+            - TESTBENCH_VERSION=3.2.*
+            - PHPUNIT_VERSION=5.7
+
+    php-7.1_laravel-5.3:
+        build:
+            args:
+                - PHP_VERSION=7.1
+        environment:
+            - TESTBENCH_VERSION=3.3.*
+            - PHPUNIT_VERSION=5.7
+
+    php-7.1_laravel-5.4:
+        build:
+            args:
+                - PHP_VERSION=7.1
+        environment:
+            - TESTBENCH_VERSION=3.4.*
+            - PHPUNIT_VERSION=5.7
+
     php-7.1_laravel-5.5:
         build:
             args:
