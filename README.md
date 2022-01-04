@@ -6,7 +6,7 @@
 
 A PHP package for working with the [SypexGeo](https://sypexgeo.net) database file.
 
-The current version supports Laravel 5.5 and later. If you need support Laravel 5.4 or older, see version [1.*](https://github.com/Eseath/sypexgeo/tree/v1).
+The current version supports Laravel 5.1 and later.
 
 ## Installation
 
@@ -21,9 +21,19 @@ For non-Laravel projects, you need to manually download the database file:
 
 > The database is updated 2 times a month.
 
-## Setup for Laravel >=5.5
+## Setup
 
-1\. Publish config `sxgeo.php` (optionally):
+### Laravel
+
+1\. If Laravel version <= 5.4, add into `config/app.php`:
+
+```php
+    'providers' => [
+        \Eseath\SxGeo\SxGeoServiceProvider::class,
+    ]
+```
+
+2\. Publish config `sxgeo.php` (optionally):
 
 ```
 php artisan vendor:publish --provider="Eseath\SxGeo\SxGeoServiceProvider"
@@ -37,7 +47,7 @@ By default, in config specified URL to the database of cities. If you want the d
 ...
 ```
 
-2\. Download the database file:
+3\. Download the database file:
 
 ```
 php artisan sxgeo:update
