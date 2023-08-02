@@ -47,6 +47,13 @@ class SxGeo
     protected $db;
     protected $regions_db;
     protected $cities_db;
+    protected $b_idx_len;
+    protected $id_len;
+    protected $max_region;
+    protected $max_city;
+    protected $block_len;
+    protected $max_country;
+    protected $pack;
 
     /**
      * SypexGeo database version.
