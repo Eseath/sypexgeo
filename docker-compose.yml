@@ -113,3 +113,10 @@ services:
                 - PHP_VERSION=8.1
         environment:
             - TESTBENCH_VERSION=6.0.*
+
+    php-8.2_laravel-9:
+        build:
+            args:
+                - PHP_VERSION=8.2
+        environment:
+            - TESTBENCH_VERSION=7.*

@@ -6,23 +6,26 @@ import yaml
 import time
 import threading
 
-class bcolors:
+
+class Colors:
     SUCCESS = '\033[92m'
     FAILURE = '\033[91m'
     LOADING = '\033[96m'
     BOLD = '\033[1m'
     END = '\033[0m'
 
+
 class Spinner:
     text = ''
 
     def __init__(self, text=''):
         self.stop_running = threading.Event()
-        self.spin_thread  = threading.Thread(target=self.initSpin)
+        self.spin_thread = threading.Thread(target=self.init_spin)
         self.text = text
-        self.view = self.makeView()
+        self.view = self.make_view()
 
-    def makeView(view):
+    @staticmethod
+    def make_view():
         while True:
             for cursor in ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']:
                 yield cursor
@@ -34,52 +37,58 @@ class Spinner:
         self.stop_running.set()
         self.spin_thread.join()
 
-    def initSpin(self):
+    def init_spin(self):
         while not self.stop_running.is_set():
-            sys.stdout.write(bcolors.LOADING + next(self.view) + bcolors.END + self.text)
+            sys.stdout.write(Colors.LOADING + next(self.view) + Colors.END + self.text)
             sys.stdout.flush()
             time.sleep(0.1)
             sys.stdout.write('\r')
 
-def hideCursor():
+
+def hide_cursor():
     sys.stdout.write("\033[?25l")
     sys.stdout.flush()
 
-def showCursor():
+
+def show_cursor():
     sys.stdout.write("\033[?25h")
     sys.stdout.flush()
 
-def handleSignal(sig, frame):
-    showCursor()
+
+def handle_signal(sig, frame):
+    show_cursor()
     sys.exit(0)
 
-def runTask(cmd, description):
+
+def run_task(cmd, description):
     spinner = Spinner(text=f' {description}')
     spinner.start()
     result = subprocess.run(cmd, capture_output=True, text=True)
     spinner.stop()
     if result.returncode == 0:
-        sys.stdout.write(bcolors.SUCCESS + '✓' + bcolors.END + f' {description}\n')
+        sys.stdout.write(Colors.SUCCESS + '✓' + Colors.END + f' {description}\n')
     else:
-        sys.stdout.write(bcolors.FAILURE + '⨯' + bcolors.END + f' {description}\n')
+        sys.stdout.write(Colors.FAILURE + '⨯' + Colors.END + f' {description}\n')
     sys.stdout.flush()
 
-def runDockerService(serviceName):
-    runTask(
-        cmd = ['docker', 'compose', 'run', '--rm', serviceName],
-        description = f'Testing in the {bcolors.BOLD}{serviceName}{bcolors.END} container'
+
+def run_docker_service(service_name):
+    run_task(
+        cmd=['docker', 'compose', 'run', '--rm', service_name],
+        description=f'Testing in the {Colors.BOLD}{service_name}{Colors.END} container'
     )
 
-signal.signal(signal.SIGINT, handleSignal)
+
+signal.signal(signal.SIGINT, handle_signal)
 
 with open('docker-compose.yml', 'r') as stream:
-    hideCursor()
-    runTask(['docker', 'compose', 'build'], 'Building docker containers')
+    hide_cursor()
+    run_task(['docker', 'compose', 'build'], 'Building docker containers')
     try:
         services = yaml.safe_load(stream)['services']
-        services = filter(lambda service: 'laravel' in service, services)
+        services = filter(lambda service_name: 'laravel' in service_name, services)
         for service in services:
-            runDockerService(service)
+            run_docker_service(service)
     except yaml.YAMLError as e:
         print(e)
-    showCursor()
+    show_cursor()
