@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Eseath\SxGeo\Tests;
 
-use Eseath\Sxgeo\DatabaseType;
+use Eseath\SxGeo\DatabaseType;
 use Eseath\SxGeo\SxGeo;
 use Illuminate\Support\Facades\Artisan;
 

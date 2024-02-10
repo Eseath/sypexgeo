@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Eseath\Sxgeo;
+namespace Eseath\SxGeo;
 
 class DatabaseType
 {
